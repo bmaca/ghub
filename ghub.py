@@ -610,7 +610,7 @@ def create_issue(issue_text=None):
         print("Sorry, something bad happened: " + str(result))
 
 
-def close_issue(number, message=None):
+def close_issue(number, issue_text=None):
     """
     Closes an opened issue.
 
@@ -618,15 +618,14 @@ def close_issue(number, message=None):
 
     """
     (upstream_user, upstream_repo) = get_user_and_repo('upstream', 'origin')
-
-    if message:
-        data = json.dumps({'body': message}).encode('utf8')
+    if issue_text:
+        data = json.dumps({'body': issue_text}).encode('utf8')
         url = GITHUB_API_URL + '/repos/%s/%s/issues/%d/comments' % (
             upstream_user, upstream_repo, number)
         result = make_github_request(
             url, data, headers={'content-type': 'application/json'})
         if 'body' in result:
-            print_pull_request_comments(result)
+            pass
         else:
             print("Something bad happened: " + str(result))
 
@@ -639,7 +638,7 @@ def close_issue(number, message=None):
         url, data, method='PATCH', headers={'content-type': 'application/json'})
 
     if 'title' in result:
-        print("Closed issue #%d: %s" % (result['number'], result['title']))
+        print("Closed issue Number %d: Issue Tittle: %s" % (result['number'], result['title']))
     else:
         print("Sorry, something bad happened: " + str(result))
 
@@ -650,7 +649,6 @@ def post_issue_comment(number, msg=None):
 
     POST /repos/:owner/:repo/issues/:number/comments
     """
-    
     msg = msg or get_text_from_editor("\n# Enter comments for issue %d" % number)
 
     if not msg:
@@ -719,11 +717,7 @@ def main():
     parser.add_argument(
         '-o', '--openissue', help='create a new issue', action='store_true')
     parser.add_argument(
-        '-close', '--closeissue', help='close an issue #', action='store_true')
-    parser.add_argument(
-        '-append', '--appendcomment',
-        help='appends a comment directly from the commandline',
-        nargs='?', type=str, default='')
+        '-x', '--close', help='close an issue #', action='store_true')
     parser.add_argument(
         '-a', '--assign', help='assign an issue to login', metavar='login',
         nargs='?', type=str, default='')
@@ -766,12 +760,10 @@ def main():
     elif args.comment:
         post_issue_comment(_issue_number(), args.message)
     elif args.openissue:
-        create_issue()
-    elif args.closeissue:
-        close_issue(_issue_number(), args.appendcomment)
         args.message = [args.number]
         create_issue(args.message)
-
+    elif args.close:
+        close_issue(_issue_number(), args.message)
     elif args.assign:
         if not args.number:
             (args.number, args.assign) = (args.assign, None)
