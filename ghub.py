@@ -619,15 +619,10 @@ def close_issue(number, issue_text=None):
     """
     (upstream_user, upstream_repo) = get_user_and_repo('upstream', 'origin')
     if issue_text:
-        data = json.dumps({'body': issue_text}).encode('utf8')
-        url = GITHUB_API_URL + '/repos/%s/%s/issues/%d/comments' % (
-            upstream_user, upstream_repo, number)
-        result = make_github_request(
-            url, data, headers={'content-type': 'application/json'})
-        if 'body' in result:
-            pass
-        else:
-            print("Something bad happened: " + str(result))
+        comment = post_issue_comment(number, issue_text)
+        if comment['status'] is False:
+            print("Aborting. Something bad happened when posting a comment: " + str(comment['content']))
+            raise SystemExit
 
     data = json.dumps({'state': 'closed'}).encode('utf8')
 
@@ -638,7 +633,7 @@ def close_issue(number, issue_text=None):
         url, data, method='PATCH', headers={'content-type': 'application/json'})
 
     if 'title' in result:
-        print("Closed issue Number %d: Issue Tittle: %s" % (result['number'], result['title']))
+        print("Closed issue #%d: %s" % (result['number'], result['title']))
     else:
         print("Sorry, something bad happened: " + str(result))
 
@@ -662,8 +657,10 @@ def post_issue_comment(number, msg=None):
         url, data, headers={'content-type': 'application/json'})
     if 'body' in result:
         print_pull_request_comments(result)
+        return {'status': True, 'content': str(result)}
     else:
         print("Something bad happened: " + str(result))
+        return {'status': False, 'content': str(result)}
 
 
 def assign_issue(number, assignee):
