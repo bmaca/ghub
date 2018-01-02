@@ -418,7 +418,8 @@ def print_pull_request(pr, verbose, reviews=None):
         print()
         print_pull_request_comments(pr['number'])
     else:
-        assignee = "@{}".format(pr['assignee']['login']) if pr['assignee'] is not None else ""
+        assignee = "[{}]".format(
+            colored(pr['assignee']['login'], 'yellow', ['bold'])) if pr.get('assignee') else ""
         print_tuple(pr['user']['login'][:12],
                     wrap_to_console('#%s %s %s' % (pr['number'], pr['title'], assignee))[0],
                     a_color='cyan')
