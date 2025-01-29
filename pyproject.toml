@@ -1,0 +1,16 @@
+[build-system]
+requires = ["setuptools"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "ghub"
+version = "1.0"
+description = "Command line client for GitHub"
+dependencies = []
+
+[project.scripts]
+ghub = "ghub:main"
+
+[tool.setuptools]
+package-dir = {"" = "src"}  
+

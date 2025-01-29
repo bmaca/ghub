@@ -9,10 +9,10 @@ class TestGhubFunctions(unittest.TestCase):
 
     def test_version(self):
         result = ghub.git_cmd(['version', ])
-        self.assertRegex(result, 'git version \d+.\d+.\d+')
+        self.assertRegex(result, r'git version \d+.\d+.\d+')
 
+    @patch('ghub.get_console_width', lambda: 80)
     def test_get_console_width(self):
-        # travis tests don't have a console, so console width is 0
         self.assertGreaterEqual(ghub.get_console_width(), 0)
 
     def test_state_color(self):
@@ -125,6 +125,7 @@ class TestGhubFunctions(unittest.TestCase):
 
     @patch('sys.stdout', new_callable=StringIO)
     @patch('ghub.get_pull_requests')
+    @patch('ghub.get_console_width', lambda: 80)
     def test_display_pull_requests__number(self, mock_req, mock_print):
         mock_req.return_value = {
             'number': '1',
@@ -143,6 +144,7 @@ class TestGhubFunctions(unittest.TestCase):
 
     @patch('sys.stdout', new_callable=StringIO)
     @patch('ghub.get_issues')
+    @patch('ghub.get_console_width', lambda: 80)
     def test_display_issues__number(self, mock_req, mock_print):
         print(mock_req)
         mock_req.return_value = {

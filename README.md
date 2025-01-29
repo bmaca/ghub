@@ -7,7 +7,7 @@ A command line interface for github.
 
 ## Requirements
 
-- Python 3.4.3 or greater
+- Python 3.6 or greater
 - git
 
 ## Introduction
@@ -25,14 +25,17 @@ This tool is a work in progress.
 
 ## Getting Started
 
-1. Install ghub:
+1. Install `ghub`:
     ```
     git clone git@github.com:ccstolley/ghub
 
     cd ghub
 
-    python3 ./setup.py install
+    pip install .
     ```
+
+    **Note**: With the new setup, `ghub` is now installed through the `pyproject.toml` configuration.
+
 2. Generate a personal access token from
    [github](https://github.com/settings/applications).
 3. Stash the access token. This has potentially serious security
